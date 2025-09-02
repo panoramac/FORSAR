@@ -18,7 +18,7 @@ interface Article {
   id: string;
   titre: string;
   auteur?: string;
-  createdAt?: string;
+  createdAt?: any; // Changed to any because Firestore timestamps need conversion
   imageUrl?: string;
   commentsCount?: number;
 }
@@ -37,10 +37,17 @@ export default function ArticlesList() {
         );
         const snapshot = await getDocs(q);
 
-        const articlesList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Article[];
+        const articlesList = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            titre: data.titre || "",
+            auteur: data.auteur || "Inconnu",
+            createdAt: data.createdAt ? formatDate(data.createdAt) : "Récemment",
+            imageUrl: data.imageUrl || "",
+            commentsCount: data.commentsCount || 0,
+          };
+        }) as Article[];
 
         console.log("✅ Articles récupérés :", articlesList);
         setArticles(articlesList);
@@ -54,6 +61,33 @@ export default function ArticlesList() {
     fetchArticles();
   }, []);
 
+  // Fonction pour formater la date Firestore
+  const formatDate = (timestamp: any): string => {
+    if (!timestamp) return "Récemment";
+    
+    try {
+      // Si c'est un timestamp Firestore
+      if (timestamp.toDate) {
+        const date = timestamp.toDate();
+        return date.toLocaleDateString('fr-FR', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+      }
+      
+      // Si c'est déjà une string
+      if (typeof timestamp === 'string') {
+        return timestamp;
+      }
+      
+      return "Récemment";
+    } catch (error) {
+      console.error("Erreur de formatage de date:", error);
+      return "Récemment";
+    }
+  };
+
   if (loading) {
     return (
       <SafeAreaView className="flex-1 justify-center items-center bg-white">
@@ -65,8 +99,11 @@ export default function ArticlesList() {
 
   if (articles.length === 0) {
     return (
-      <SafeAreaView className="flex-1 justify-center items-center bg-white">
-        <Text>Aucun article trouvé</Text>
+      <SafeAreaView className="flex-1 justify-center items-center bg-white px-4">
+        <Ionicons name="newspaper-outline" size={64} color="#9CA3AF" />
+        <Text className="text-gray-500 text-lg text-center mt-4">
+          Aucun article disponible pour le moment
+        </Text>
       </SafeAreaView>
     );
   }
@@ -75,7 +112,7 @@ export default function ArticlesList() {
     <SafeAreaView className="flex-1 bg-white px-4">
       {/* Header avec retour */}
       <View className="flex-row items-center mt-2 mb-4">
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-lg font-bold mr-6">
@@ -94,13 +131,14 @@ export default function ArticlesList() {
             <ArticleCard
               category={item.auteur || "Inconnu"}
               title={item.titre}
-              timeAgo={item.createdAt || "Récemment"}
-              background={{ uri: item.imageUrl }}
+              timeAgo={item.createdAt}
+              background={item.imageUrl ? { uri: item.imageUrl } : undefined}
             />
           </Pressable>
         )}
-        ItemSeparatorComponent={() => <View className="h-2" />}
+        ItemSeparatorComponent={() => <View className="h-4" />}
         contentContainerStyle={{ paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>
   );
