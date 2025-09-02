@@ -1,29 +1,149 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Stack} from "expo-router";
+import './globals.css';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  return <Stack >
+    
+  <Stack.Screen 
+    name="index"
+     options={{
+      headerShown: false,
+      animation: "none",
+     }}
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+     
+     />
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+      <Stack.Screen 
+    name="auth"
+     options={{
+      headerShown: false,
+      animation: "none",
+     }}
+     
+     
+     />
+
+     
+    <Stack.Screen 
+    
+     name="(tabs)"
+     options={{
+      headerShown: false,
+      animation: "none",
+     }}
+    
+    />
+    <Stack.Screen 
+    
+     name="courses/[id]"
+     options={{
+      headerShown: false,
+      animation: "none"
+     }}
+    
+    />
+    <Stack.Screen 
+    
+     name="courses/index"
+     options={{
+      headerShown: false,
+      animation: "none"
+     }}
+    
+    />
+    <Stack.Screen 
+    
+     name="articles"
+     options={{
+      headerShown: false,
+      animation: "none"
+     }}
+    
+    />
+    <Stack.Screen 
+    
+     name="articles/[id]"
+     options={{
+      headerShown: false,
+      animation: "none"
+     }}
+    
+    />
+    <Stack.Screen 
+    
+     name="articles/index"
+     options={{
+      headerShown: false,
+      animation: "none"
+     }}
+    
+    />
+    <Stack.Screen 
+    
+     name="courses/[id]/chapters/[id]"
+     options={{
+      headerShown: false,
+      animation: "none"
+     }}
+    
+    />
+    <Stack.Screen 
+    
+     name="courses/[id]/quiz/[id]"
+     options={{
+      headerShown: false,
+      animation: "none"
+     }}
+    
+    />
+
+    <Stack.Screen 
+    
+     name="courses/[id]/quiz/Result"
+     options={{
+      headerShown: false,
+      animation: "none"
+     }}
+    
+    />
+    <Stack.Screen 
+    
+     name="notification"
+     options={{
+      headerShown: false,
+      animation: "none"
+     }}
+    
+    />
+
+    <Stack.Screen 
+    
+     name="courses/continuelearning"
+     options={{
+      headerShown: false,
+      animation: "none"
+     }}
+    
+    />
+    <Stack.Screen 
+    name="tutor"
+     options={{
+      headerShown: false,
+      animation: "none",
+     }}
+     
+     
+     />
+     <Stack.Screen 
+    name="tutor/index"
+     options={{
+      headerShown: false,
+      animation: "none",
+     }}
+     
+     
+     />
+
+    </Stack>;
 }
